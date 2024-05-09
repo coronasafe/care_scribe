@@ -4,7 +4,7 @@ import logging
 
 import requests
 from celery import shared_task
-from openai import OpenAI
+from openai import OpenAI, AzureOpenAI
 
 from care_scribe.models.scribe import Scribe
 from care_scribe.models.scribe_file import ScribeFile
@@ -12,16 +12,25 @@ from care_scribe.settings import plugin_settings
 
 logger = logging.getLogger(__name__)
 
-OpenAIClient = None
+AiClient = None
 
 
 def get_openai_client():
-    global OpenAIClient
-    if OpenAIClient is None:
-        OpenAIClient = OpenAI(
-            api_key=plugin_settings.TRANSCRIBE_SERVICE_PROVIDER_API_KEY
-        )
-    return OpenAIClient
+    global AiClient
+    if AiClient is None:
+        if plugin_settings.API_PROVIDER == 'azure':
+            AiClient = AzureOpenAI(
+                api_key=plugin_settings.TRANSCRIBE_SERVICE_PROVIDER_API_KEY,
+                api_version=plugin_settings.AZURE_API_VERSION
+                azure_endpoint=plugin_settings.AZURE_ENDPOINT
+            )
+        elif plugin_settings.API_PROVIDER == 'openai':
+            AiClient = OpenAI(
+                api_key=plugin_settings.TRANSCRIBE_SERVICE_PROVIDER_API_KEY
+            )
+        else:
+            raise Exception('Invalid API_PROVIDER in plugin_settings')
+    return AiClient
 
 
 prompt_1 = """
@@ -86,7 +95,7 @@ def process_ai_form_fill(external_id):
                     buffer.name = "file.mp3"
 
                     transcription = get_openai_client().audio.transcriptions.create(
-                        model="whisper-1", file=buffer
+                        model=plugin_settings.AUDIO_MODEL_NAME, file=buffer # This can be the model name (OPENAI) or the custom deployment name (AZURE)
                     )
                     transcript += transcription.text
                     logger.info(f"Transcript: {transcript}")
@@ -103,7 +112,7 @@ def process_ai_form_fill(external_id):
 
             # Process the transcript with Ayushma
             ai_response = get_openai_client().chat.completions.create(
-                model="gpt-4-turbo-preview",
+                model=plugin_settings.CHAT_MODEL_NAME, # This can be the model name (OPENAI) or the custom deployment name (AZURE) 
                 response_format={"type": "json_object"},
                 max_tokens=4096,
                 temperature=0,
