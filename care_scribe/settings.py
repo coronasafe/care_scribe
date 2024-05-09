@@ -98,16 +98,25 @@ class PluginSettings:  # pragma: no cover
 
 
 TSP_API_KEY = "TRANSCRIBE_SERVICE_PROVIDER_API_KEY"
+AUDIO_MODEL_NAME = "AUDIO_MODEL_NAME"
+CHAT_MODEL_NAME = "CHAT_MODEL_NAME"
 
 REQUIRED_SETTINGS = {
     TSP_API_KEY,
+    AUDIO_MODEL_NAME,
+    CHAT_MODEL_NAME,
 }
 
-DEFAULTS = {TSP_API_KEY: "test"}
+DEFAULTS = {
+    TSP_API_KEY: "test",
+    AUDIO_MODEL_NAME: "whisper-1",
+    CHAT_MODEL_NAME: "gpt-4-turbo",
+}
 
 plugin_settings = PluginSettings(
     PLUGIN_NAME, defaults=DEFAULTS, required_settings=REQUIRED_SETTINGS
 )
+
 
 @receiver(setting_changed)
 def reload_plugin_settings(*args, **kwargs) -> None:
