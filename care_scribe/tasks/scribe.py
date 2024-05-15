@@ -21,7 +21,7 @@ def get_openai_client():
         if plugin_settings.API_PROVIDER == 'azure':
             AiClient = AzureOpenAI(
                 api_key=plugin_settings.TRANSCRIBE_SERVICE_PROVIDER_API_KEY,
-                api_version=plugin_settings.AZURE_API_VERSION
+                api_version=plugin_settings.AZURE_API_VERSION,
                 azure_endpoint=plugin_settings.AZURE_ENDPOINT
             )
         elif plugin_settings.API_PROVIDER == 'openai':
