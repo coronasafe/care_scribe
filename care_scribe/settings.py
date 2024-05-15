@@ -110,10 +110,12 @@ REQUIRED_SETTINGS = {
 }
 
 DEFAULTS = {
-    TSP_API_KEY: "test",
+    TSP_API_KEY: "",
     AUDIO_MODEL_NAME: "whisper-1",
     CHAT_MODEL_NAME: "gpt-4-turbo",
     API_PROVIDER: "openai",
+    "AZURE_API_VERSION": "",
+    "AZURE_ENDPOINT": "",
 }
 
 plugin_settings = PluginSettings(
