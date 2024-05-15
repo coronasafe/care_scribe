@@ -100,17 +100,20 @@ class PluginSettings:  # pragma: no cover
 TSP_API_KEY = "TRANSCRIBE_SERVICE_PROVIDER_API_KEY"
 AUDIO_MODEL_NAME = "AUDIO_MODEL_NAME"
 CHAT_MODEL_NAME = "CHAT_MODEL_NAME"
+API_PROVIDER = "API_PROVIDER"
 
 REQUIRED_SETTINGS = {
     TSP_API_KEY,
     AUDIO_MODEL_NAME,
     CHAT_MODEL_NAME,
+    API_PROVIDER,
 }
 
 DEFAULTS = {
     TSP_API_KEY: "test",
     AUDIO_MODEL_NAME: "whisper-1",
     CHAT_MODEL_NAME: "gpt-4-turbo",
+    API_PROVIDER: "openai",
 }
 
 plugin_settings = PluginSettings(
