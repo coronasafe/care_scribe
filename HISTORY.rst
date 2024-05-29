@@ -2,6 +2,11 @@
 History
 =======
 
+0.2.1 (2024-06-04)
+
+* Use translation API to generate text for the prompt.
+
+
 0.2.0 (2024-05-18)
 ------------------
 
