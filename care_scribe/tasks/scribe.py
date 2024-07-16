@@ -1,8 +1,6 @@
-import io
 import json
 import logging
 
-import requests
 from celery import shared_task
 from openai import OpenAI, AzureOpenAI
 
@@ -66,14 +64,13 @@ def process_ai_form_fill(external_id):
 
         logger.info(f"Processing AI form fill {form.external_id}")
 
-        audio_file_urls = []
         transcript = ""
 
         # Get the audio file URLs
-        for audio_file_id in form.audio_file_ids:
-            audio_file = ScribeFile.objects.get(external_id=audio_file_id)
-            audio_file_urls.append(audio_file.read_signed_url())
-            logger.info(f"Audio file URL: {audio_file_urls[-1]}")
+        # for audio_file_id in form.audio_file_ids:
+        #     audio_file = ScribeFile.objects.get(external_id=audio_file_id)
+        #     audio_file_urls.append(audio_file.read_signed_url())
+        #     logger.info(f"Audio file URL: {audio_file_urls[-1]}")
 
         try:
             # Update status to GENERATING_TRANSCRIPT
@@ -84,18 +81,15 @@ def process_ai_form_fill(external_id):
             if not form.transcript:
                 # Use Ayushma to generate transcript from the audio file
                 transcript = ""
-                for audio_file_url in audio_file_urls:
-                    audio_file_data = requests.request("GET", audio_file_url).content
-
-                    audio_file_data = requests.request(
-                        "GET", audio_file_url, verify=False
-                    ).content
-
-                    buffer = io.BytesIO(audio_file_data)
-                    buffer.name = "file.mp3"
+                audio_file_objects = ScribeFile.objects.filter(
+                    external_id__in=form.audio_file_ids
+                )
+                logger.info(f"Audio file objects: {audio_file_objects}")
+                for audio_file_object in audio_file_objects:
+                    _, audio_file_data = audio_file_object.file_contents()
 
                     transcription = get_openai_client().audio.transcriptions.create(
-                        model=plugin_settings.AUDIO_MODEL_NAME, file=buffer # This can be the model name (OPENAI) or the custom deployment name (AZURE)
+                        model=plugin_settings.AUDIO_MODEL_NAME, file=audio_file_data # This can be the model name (OPENAI) or the custom deployment name (AZURE)
                     )
                     transcript += transcription.text
                     logger.info(f"Transcript: {transcript}")
