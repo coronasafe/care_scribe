@@ -65,13 +65,6 @@ def process_ai_form_fill(external_id):
         logger.info(f"Processing AI form fill {form.external_id}")
 
         transcript = ""
-
-        # Get the audio file URLs
-        # for audio_file_id in form.audio_file_ids:
-        #     audio_file = ScribeFile.objects.get(external_id=audio_file_id)
-        #     audio_file_urls.append(audio_file.read_signed_url())
-        #     logger.info(f"Audio file URL: {audio_file_urls[-1]}")
-
         try:
             # Update status to GENERATING_TRANSCRIPT
             logger.info(f"Generating transcript for AI form fill {form.external_id}")
