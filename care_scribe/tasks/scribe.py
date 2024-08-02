@@ -56,7 +56,6 @@ def process_ai_form_fill(external_id):
     ai_form_fills = Scribe.objects.filter(
         external_id=external_id, status=Scribe.Status.READY
     )
-    print(ai_form_fills)
 
     for form in ai_form_fills:
         # Skip forms without audio files
