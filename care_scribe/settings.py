@@ -91,6 +91,8 @@ class PluginSettings:  # pragma: no cover
 
         for setting_name in ("SCRIBE_CHAT_MODEL_NAME", "SCRIBE_TRANSCRIBE_MODEL_NAME"):
             value = getattr(self, setting_name)
+            if not value:
+                continue
             if "/" not in value:
                 raise ImproperlyConfigured(
                     f'Invalid value for "{setting_name}". '
@@ -138,16 +140,13 @@ class PluginSettings:  # pragma: no cover
             delattr(self, "_user_settings")
 
 
-REQUIRED_SETTINGS = {
-    "SCRIBE_CHAT_MODEL_NAME",
-    "SCRIBE_TRANSCRIBE_MODEL_NAME",
-}
+REQUIRED_SETTINGS = set()
 
 DEFAULTS = {
     "SCRIBE_OPENAI_API_KEY": "",
     "SCRIBE_AZURE_API_KEY": "",
-    "SCRIBE_TRANSCRIBE_MODEL_NAME": "openai/whisper-1",
-    "SCRIBE_CHAT_MODEL_NAME": "openai/gpt-4o",
+    "SCRIBE_TRANSCRIBE_MODEL_NAME": "",
+    "SCRIBE_CHAT_MODEL_NAME": "",
     "SCRIBE_AZURE_API_VERSION": "",
     "SCRIBE_AZURE_ENDPOINT": "",
     "SCRIBE_GOOGLE_PROJECT_ID" : "",
